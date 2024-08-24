@@ -1,0 +1,53 @@
+@import "./mixins.scss";
+@import "./variables.scss";
+
+.toolbar {
+  @include bar;
+  z-index: 10;
+  padding: 0 21px;
+
+  &__btn {
+    width: 25px;
+    height: 25px;
+    margin-left: 16px;
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+  .brush {
+    background-image: url("../assets/brush.svg");
+  }
+  .rect {
+    background-color: $black-color;
+    border-radius: 4px;
+  }
+  .circle {
+    border: 2px solid $black-color;
+    border-radius: 50%;
+  }
+  .eraser {
+    background-image: url("../assets/eraser.svg");
+  }
+  .line {
+    &::after {
+      content: "";
+      display: block;
+      width: 25px;
+      height: 3px;
+      background-color: $black-color;
+      transform: rotate(-40deg);
+      border-radius: 1px;
+    }
+  }
+  .undo {
+    background-image: url("../assets/undo.svg");
+    margin-left: auto;
+  }
+  .redo {
+    background-image: url("../assets/undo.svg");
+    transform: scaleX(-1);
+  }
+  .save {
+    background-image: url("../assets/save.svg");
+  }
+}
