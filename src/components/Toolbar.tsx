@@ -11,7 +11,10 @@ const Toolbar = () => {
         className="toolbar__btn brush"
         onClick={() => toolState.setTool(new Brush(canvasState.canvas!))}
       />
-      <button className="toolbar__btn rect" onClick={() => toolState.setTool(new Rect(canvasState.canvas!))} />
+      <button
+        className="toolbar__btn rect"
+        onClick={() => toolState.setTool(new Rect(canvasState.canvas!))}
+      />
       <button className="toolbar__btn circle" />
       <button className="toolbar__btn eraser" />
       <button className="toolbar__btn line" />

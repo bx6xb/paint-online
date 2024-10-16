@@ -20,17 +20,17 @@ export default class Rect extends Tool {
   mouseUpHandler() {
     this.mouseDown = false
   }
-  mouseDownHandler(e: any) {
+  mouseDownHandler(e: MouseEvent) {
     this.mouseDown = true
     this.ctx.beginPath()
-    this.startX = e.pageX - e.target.offsetLeft
-    this.startY = e.pageY - e.target.offsetTop
+    this.startX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft
+    this.startY = e.pageY - (e.target as HTMLCanvasElement).offsetTop
     this.saved = this.canvas.toDataURL()
   }
-  mouseMoveHandler(e: any) {
+  mouseMoveHandler(e: MouseEvent) {
     if (this.mouseDown) {
-      const currentX = e.pageX - e.target.offsetLeft
-      const currentY = e.pageY - e.target.offsetTop
+      const currentX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft
+      const currentY = e.pageY - (e.target as HTMLCanvasElement).offsetTop
       const width = currentX - this.startX
       const height = currentY - this.startY
 
