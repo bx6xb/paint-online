@@ -6,9 +6,14 @@ class CanvasState {
   canvas: Canvas = null
   undoList: string[] = []
   redoList: string[] = []
+  username = ""
 
   constructor() {
     makeAutoObservable(this)
+  }
+
+  setUsername(username: string) {
+    this.username = username
   }
 
   setCanvas(canvas: Canvas) {
