@@ -5,9 +5,11 @@ export default class Rect extends Tool {
   startX = 0
   startY = 0
   saved = ""
+  width: number = 0
+  height: number = 0
 
-  constructor(canvas: HTMLCanvasElement) {
-    super(canvas)
+  constructor(canvas: HTMLCanvasElement, socket: any, id: string) {
+    super(canvas, socket, id)
     this.listen()
   }
 
@@ -17,8 +19,23 @@ export default class Rect extends Tool {
     this.canvas.onmousemove = this.mouseMoveHandler.bind(this)
   }
 
-  mouseUpHandler() {
+  mouseUpHandler(e: MouseEvent) {
     this.mouseDown = false
+
+    this.socket.send(
+      JSON.stringify({
+        method: "draw",
+        id: this.id,
+        figure: {
+          type: "rect",
+          x: this.startX,
+          y: this.startY,
+          width: this.width,
+          height: this.height,
+          color: this.ctx.fillStyle,
+        },
+      })
+    )
   }
   mouseDownHandler(e: MouseEvent) {
     this.mouseDown = true
@@ -31,10 +48,10 @@ export default class Rect extends Tool {
     if (this.mouseDown) {
       const currentX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft
       const currentY = e.pageY - (e.target as HTMLCanvasElement).offsetTop
-      const width = currentX - this.startX
-      const height = currentY - this.startY
+      this.width = currentX - this.startX
+      this.height = currentY - this.startY
 
-      this.draw(this.startX, this.startY, width, height)
+      this.draw(this.startX, this.startY, this.width, this.height)
     }
   }
 
@@ -49,5 +66,20 @@ export default class Rect extends Tool {
       this.ctx.fill()
       this.ctx.stroke()
     }
+  }
+
+  static staticDraw(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    color: string
+  ) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.rect(x, y, w, h)
+    ctx.fill()
+    ctx.stroke()
   }
 }

@@ -6,6 +6,8 @@ import toolState from "../store/toolState"
 import Brush from "../tools/Brush"
 import { Button, Modal } from "react-bootstrap"
 import { useParams } from "react-router-dom"
+import Rect from "../tools/Rect"
+import axios from "axios"
 
 const Canvas = observer(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -15,12 +17,33 @@ const Canvas = observer(() => {
 
   useEffect(() => {
     canvasState.setCanvas(canvasRef.current)
-    toolState.setTool(new Brush(canvasRef.current!))
+    axios.get(`http://localhost:5000/image?id=${id}`).then((res) => {
+      const img = new Image()
+      img.src = res.data
+      img.onload = () => {
+        const ctx = canvasRef.current!.getContext("2d")!
+
+        ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvasRef.current!.width,
+          canvasRef.current!.height
+        )
+      }
+    })
   }, [])
 
   useEffect(() => {
     if (canvasState.username) {
       const socket = new WebSocket("ws://localhost:5000")
+
+      canvasState.setSocket(socket)
+      canvasState.setSessionId(id!)
+
+      toolState.setTool(new Brush(canvasRef.current!, socket, id!))
+
       socket.onopen = () => {
         console.log("Connected to the server")
 
@@ -32,14 +55,56 @@ const Canvas = observer(() => {
           })
         )
         socket.onmessage = (event) => {
-          console.log(event.data)
+          const msg = JSON.parse(event.data)
+          switch (msg.method) {
+            case "connection": {
+              console.log(`User '${msg.username}' has connected`)
+              break
+            }
+            case "draw": {
+              drawHadnler(msg)
+              break
+            }
+          }
         }
       }
     }
   }, [canvasState.username])
 
+  const drawHadnler = (msg: any) => {
+    const figure = msg.figure
+    const ctx = canvasRef.current!.getContext("2d")!
+
+    switch (figure.type) {
+      case "brush": {
+        Brush.draw(ctx, figure.x, figure.y)
+        break
+      }
+      case "rect": {
+        Rect.staticDraw(
+          ctx,
+          figure.x,
+          figure.y,
+          figure.width,
+          figure.height,
+          figure.color
+        )
+        break
+      }
+      case "finish": {
+        ctx.beginPath()
+        break
+      }
+    }
+  }
+
   const onMouseDown = () => {
     canvasState.pushToUndo(canvasRef.current!.toDataURL())
+    axios
+      .post(`http://localhost:5000/image?id=${id}`, {
+        img: canvasRef.current?.toDataURL(),
+      })
+      .then((res) => console.log(res))
   }
 
   const connectHandler = () => {
