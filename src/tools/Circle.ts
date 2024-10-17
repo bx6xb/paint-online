@@ -1,10 +1,6 @@
 import Rect from "./Rect"
 
 export default class Circle extends Rect {
-  constructor(canvas: HTMLCanvasElement) {
-    super(canvas)
-  }
-
   mouseMoveHandler(e: MouseEvent) {
     if (this.mouseDown) {
       const currentX = e.pageX - (e.target as HTMLCanvasElement).offsetLeft
