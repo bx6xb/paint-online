@@ -37,8 +37,14 @@ const Toolbar = () => {
         onClick={() => toolState.setTool(new Line(canvasState.canvas!))}
       />
       <input style={{ marginLeft: 16 }} type="color" onChange={changeColor} />
-      <button className="toolbar__btn undo" />
-      <button className="toolbar__btn redo" />
+      <button
+        className="toolbar__btn undo"
+        onClick={() => canvasState.undo()}
+      />
+      <button
+        className="toolbar__btn redo"
+        onClick={() => canvasState.redo()}
+      />
       <button className="toolbar__btn save" />
     </div>
   )

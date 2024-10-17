@@ -13,9 +13,18 @@ const Canvas = observer(() => {
     toolState.setTool(new Brush(canvasRef.current!))
   }, [])
 
+  const onMouseDown = () => {
+    canvasState.pushToUndo(canvasRef.current!.toDataURL())
+  }
+
   return (
     <div className="canvas">
-      <canvas ref={canvasRef} width={600} height={400} />
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={400}
+        onMouseDown={onMouseDown}
+      />
     </div>
   )
 })
